@@ -10,6 +10,7 @@ packages = [{include = "wanted_pre_onboarding_backend"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 Django = "^4.1.2"
+djangorestframework = "^3.14.0"
 
 
 [build-system]
