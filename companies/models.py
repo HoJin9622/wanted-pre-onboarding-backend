@@ -24,3 +24,9 @@ class Company(CommonModel):
         max_length=60,
         verbose_name="지역",
     )
+
+    class Meta:
+        verbose_name_plural = "Companies"
+
+    def __str__(self):
+        return self.name

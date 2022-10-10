@@ -16,3 +16,9 @@ class Apply(CommonModel):
         related_name="applies",
         verbose_name="지원자",
     )
+
+    class Meta:
+        verbose_name_plural = "Applies"
+
+    def __str__(self):
+        return f"{self.recruit} 공고 - 지원자 {self.user}"

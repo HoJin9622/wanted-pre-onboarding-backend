@@ -26,3 +26,6 @@ class Recruit(CommonModel):
         related_name="recruits",
         verbose_name="채용회사",
     )
+
+    def __str__(self):
+        return self.position
