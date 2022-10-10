@@ -35,6 +35,7 @@ CUSTOM_APPS = [
     "users.apps.UsersConfig",
     "companies.apps.CompaniesConfig",
     "recruits.apps.RecruitsConfig",
+    "applies.apps.AppliesConfig",
 ]
 
 SYSTEM_APPS = [
