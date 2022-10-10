@@ -12,6 +12,9 @@ class RecruitSerializer(serializers.ModelSerializer):
         read_only_fields = ("company",)
 
     def validate_company_id(self, value):
+        request = self.context.get("request")
+        if request.method == "PATCH":
+            raise serializers.ValidationError("company_id can not be modified")
         try:
             Company.objects.get(pk=value)
             return value
