@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "wanted-pre-onboarding-backend"
+version = "0.1.0"
+description = "원티드 프리온보딩 백엔드 코스"
+authors = ["HoJin9622 <kiss0104040@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "wanted_pre_onboarding_backend"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "^4.1.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
