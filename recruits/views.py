@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework.viewsets import ModelViewSet
+from .models import Recruit
+from .serializers import RecruitSerializer
 
-# Create your views here.
+
+class RecruitViewSet(ModelViewSet):
+
+    queryset = Recruit.objects.all()
+    serializer_class = RecruitSerializer
