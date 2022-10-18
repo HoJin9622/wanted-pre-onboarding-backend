@@ -74,7 +74,7 @@ class RecruitDetail(APIView):
     def delete(self, request, pk):
         recruit = self.get_object(pk)
         recruit.delete()
-        return Response(HTTP_204_NO_CONTENT)
+        return Response(status=HTTP_204_NO_CONTENT)
 
 
 class RecruitApply(APIView):
