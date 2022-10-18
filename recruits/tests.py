@@ -4,32 +4,38 @@ from companies.models import Company
 from users.models import User
 
 
+def init():
+    wanted = Company.objects.create(
+        name="원티드랩",
+        nation="korea",
+        area="서울",
+    )
+    kakao = Company.objects.create(
+        name="카카오",
+        nation="korea",
+        area="서울",
+    )
+    wanted_recruit = Recruit.objects.create(
+        position="Django 백엔드 개발자",
+        reward=1000000,
+        description="원티드랩에서 백엔드 주니어 개발자를 채용합니다.",
+        skill="Python",
+        company=wanted,
+    )
+    kakao_recruit = Recruit.objects.create(
+        position="Django 백엔드 개발자",
+        reward=500000,
+        description="카카오에서 백엔드 주니어 개발자를 채용합니다.",
+        skill="Django",
+        company=kakao,
+    )
+
+    return wanted, kakao, wanted_recruit, kakao_recruit
+
+
 class TestRecruits(APITestCase):
     def setUp(self):
-        self.wanted = Company.objects.create(
-            name="원티드랩",
-            nation="korea",
-            area="서울",
-        )
-        self.kakao = Company.objects.create(
-            name="카카오",
-            nation="korea",
-            area="서울",
-        )
-        self.wanted_recruit = Recruit.objects.create(
-            position="Django 백엔드 개발자",
-            reward=1000000,
-            description="원티드랩에서 백엔드 주니어 개발자를 채용합니다.",
-            skill="Python",
-            company=self.wanted,
-        )
-        self.kakao_recruit = Recruit.objects.create(
-            position="Django 백엔드 개발자",
-            reward=500000,
-            description="카카오에서 백엔드 주니어 개발자를 채용합니다.",
-            skill="Django",
-            company=self.kakao,
-        )
+        self.wanted, self.kakao, self.wanted_recruit, self.kakao_recruit = init()
 
     def test_all_recruits(self):
         response = self.client.get("/api/v1/recruits/")
@@ -116,30 +122,7 @@ class TestRecruits(APITestCase):
 
 class TestRecruit(APITestCase):
     def setUp(self):
-        self.wanted = Company.objects.create(
-            name="원티드랩",
-            nation="korea",
-            area="서울",
-        )
-        self.kakao = Company.objects.create(
-            name="카카오",
-            nation="korea",
-            area="서울",
-        )
-        self.wanted_recruit = Recruit.objects.create(
-            position="Django 백엔드 개발자",
-            reward=1000000,
-            description="원티드랩에서 백엔드 주니어 개발자를 채용합니다.",
-            skill="Python",
-            company=self.wanted,
-        )
-        self.kakao_recruit = Recruit.objects.create(
-            position="Django 백엔드 개발자",
-            reward=500000,
-            description="카카오에서 백엔드 주니어 개발자를 채용합니다.",
-            skill="Django",
-            company=self.kakao,
-        )
+        self.wanted, self.kakao, self.wanted_recruit, self.kakao_recruit = init()
 
     def test_recruit_not_found(self):
         response = self.client.put("/api/v1/recruits/4")
@@ -188,30 +171,7 @@ class TestRecruit(APITestCase):
 
 class TestRecruitApply(APITestCase):
     def setUp(self):
-        self.wanted = Company.objects.create(
-            name="원티드랩",
-            nation="korea",
-            area="서울",
-        )
-        self.kakao = Company.objects.create(
-            name="카카오",
-            nation="korea",
-            area="서울",
-        )
-        self.wanted_recruit = Recruit.objects.create(
-            position="Django 백엔드 개발자",
-            reward=1000000,
-            description="원티드랩에서 백엔드 주니어 개발자를 채용합니다.",
-            skill="Python",
-            company=self.wanted,
-        )
-        self.kakao_recruit = Recruit.objects.create(
-            position="Django 백엔드 개발자",
-            reward=500000,
-            description="카카오에서 백엔드 주니어 개발자를 채용합니다.",
-            skill="Django",
-            company=self.kakao,
-        )
+        self.wanted, self.kakao, self.wanted_recruit, self.kakao_recruit = init()
         user = User.objects.create(username="test")
         user.set_password("1234")
         user.save()
