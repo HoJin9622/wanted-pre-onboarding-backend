@@ -1,5 +1,9 @@
 from django.db.models import Q
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_204_NO_CONTENT
+from rest_framework.status import (
+    HTTP_400_BAD_REQUEST,
+    HTTP_204_NO_CONTENT,
+    HTTP_201_CREATED,
+)
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.exceptions import ParseError, NotFound
@@ -32,14 +36,15 @@ class Recruits(APIView):
         if not company_id:
             raise ParseError("Company id is required.")
 
+        try:
+            company = Company.objects.get(id=company_id)
+        except Company.DoesNotExist:
+            raise ParseError("Company not found.")
+
         if serializer.is_valid():
-            try:
-                company = Company.objects.get(id=company_id)
-            except Company.DoesNotExist:
-                raise ParseError("Company not found.")
             recruit = serializer.save(company=company)
             serializer = RecruitDetailSerializer(recruit)
-            return Response(serializer.data)
+            return Response(serializer.data, status=HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
