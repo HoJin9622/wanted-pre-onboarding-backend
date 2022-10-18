@@ -17,6 +17,10 @@ from applies.serializers import ApplySerializer
 
 class Recruits(APIView):
     def get(self, request):
+        """
+        채용공고 목록
+        GET /api/v1/recruits/search={query}
+        """
         recruits = Recruit.objects.all()
         search = self.request.query_params.get("search")
 
@@ -31,6 +35,10 @@ class Recruits(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        """
+        채용공고 생성
+        POST /api/v1/recruits/
+        """
         serializer = RecruitDetailSerializer(data=request.data)
         company_id = request.data.get("company_id")
 
@@ -58,11 +66,19 @@ class RecruitDetail(APIView):
             raise NotFound
 
     def get(self, request, pk):
+        """
+        채용공고 상세
+        GET /api/v1/recruits/{recruit_id}
+        """
         recruit = self.get_object(pk)
         serializer = RecruitDetailSerializer(recruit)
         return Response(serializer.data)
 
     def put(self, request, pk):
+        """
+        채용공고 수정
+        PUT /api/v1/recruits/{recruit_id}
+        """
         recruit = self.get_object(pk)
         serializer = RecruitDetailSerializer(
             recruit,
@@ -78,6 +94,10 @@ class RecruitDetail(APIView):
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
+        """
+        채용공고 삭제
+        DELETE /api/v1/recruits/{recruit_id}
+        """
         recruit = self.get_object(pk)
         recruit.delete()
         return Response(status=HTTP_204_NO_CONTENT)
@@ -94,6 +114,10 @@ class RecruitApply(APIView):
             raise NotFound
 
     def post(self, request, pk):
+        """
+        채용공고에 지원
+        POST /api/v1/recruits/{recruit_id}/applies
+        """
         recruit = self.get_object(pk)
         serializer = ApplySerializer(data=request.data)
 

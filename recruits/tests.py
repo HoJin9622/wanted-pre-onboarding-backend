@@ -5,6 +5,7 @@ from users.models import User
 
 
 def init():
+    """초기 데이터베이스 설정"""
     wanted = Company.objects.create(
         name="원티드랩",
         nation="korea",
@@ -38,6 +39,7 @@ class TestRecruits(APITestCase):
         self.wanted, self.kakao, self.wanted_recruit, self.kakao_recruit = init()
 
     def test_all_recruits(self):
+        """채용공고 목록 테스트"""
         response = self.client.get("/api/v1/recruits/")
         data = response.json()
         self.assertEqual(response.status_code, 200)
@@ -51,6 +53,7 @@ class TestRecruits(APITestCase):
         self.assertEqual(data[0]["skill"], self.wanted_recruit.skill)
 
     def test_search_recruits(self):
+        """채용공고 검색 테스트"""
         response = self.client.get("/api/v1/recruits/?search=원티드")
         data = response.json()
         self.assertEqual(response.status_code, 200)
@@ -78,6 +81,7 @@ class TestRecruits(APITestCase):
         self.assertEqual(data[0]["skill"], self.wanted_recruit.skill)
 
     def test_create_recruits(self):
+        """채용공고 생생 테스트"""
         response = self.client.post("/api/v1/recruits/")
         data = response.json()
 
@@ -125,6 +129,7 @@ class TestRecruit(APITestCase):
         self.wanted, self.kakao, self.wanted_recruit, self.kakao_recruit = init()
 
     def test_recruit_not_found(self):
+        """채용공고 Not Found 테스트"""
         response = self.client.put("/api/v1/recruits/4")
         data = response.json()
 
@@ -132,6 +137,7 @@ class TestRecruit(APITestCase):
         self.assertEqual(data["detail"], "Not found.")
 
     def test_one_recruit(self):
+        """채용공고 상세 테스트"""
         response = self.client.put("/api/v1/recruits/1")
         data = response.json()
 
@@ -140,6 +146,7 @@ class TestRecruit(APITestCase):
         self.assertIsInstance(data, dict)
 
     def test_update_recruit(self):
+        """채용공고 수정 테스트"""
         response = self.client.put("/api/v1/recruits/1", {"company_id": 2})
         data = response.json()
 
@@ -160,6 +167,7 @@ class TestRecruit(APITestCase):
         self.assertEqual(data["reward"], 300000)
 
     def test_delete_recruit(self):
+        """채용공고 삭제 테스트"""
         response = self.client.delete("/api/v1/recruits/1")
 
         self.assertEqual(response.status_code, 204)
@@ -178,6 +186,7 @@ class TestRecruitApply(APITestCase):
         self.user = user
 
     def test_create_apply(self):
+        """채용공고 지원 테스트"""
         response = self.client.post("/api/v1/recruits/1/applies")
         data = response.json()
 
