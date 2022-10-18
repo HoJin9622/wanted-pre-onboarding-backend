@@ -1,6 +1,7 @@
 from rest_framework.test import APITestCase
 from recruits.models import Recruit
 from companies.models import Company
+from users.models import User
 
 
 class TestRecruits(APITestCase):
@@ -183,3 +184,56 @@ class TestRecruit(APITestCase):
         response = self.client.get("/api/v1/recruits/1")
 
         self.assertEqual(response.status_code, 404)
+
+
+class TestRecruitApply(APITestCase):
+    def setUp(self):
+        self.wanted = Company.objects.create(
+            name="원티드랩",
+            nation="korea",
+            area="서울",
+        )
+        self.kakao = Company.objects.create(
+            name="카카오",
+            nation="korea",
+            area="서울",
+        )
+        self.wanted_recruit = Recruit.objects.create(
+            position="Django 백엔드 개발자",
+            reward=1000000,
+            description="원티드랩에서 백엔드 주니어 개발자를 채용합니다.",
+            skill="Python",
+            company=self.wanted,
+        )
+        self.kakao_recruit = Recruit.objects.create(
+            position="Django 백엔드 개발자",
+            reward=500000,
+            description="카카오에서 백엔드 주니어 개발자를 채용합니다.",
+            skill="Django",
+            company=self.kakao,
+        )
+        user = User.objects.create(username="test")
+        user.set_password("1234")
+        user.save()
+        self.user = user
+
+    def test_create_apply(self):
+        response = self.client.post("/api/v1/recruits/1/applies")
+        data = response.json()
+
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(
+            data["detail"], "Authentication credentials were not provided."
+        )
+
+        self.client.force_login(self.user)
+
+        response = self.client.post("/api/v1/recruits/1/applies")
+
+        self.assertEqual(response.status_code, 201)
+
+        response = self.client.post("/api/v1/recruits/1/applies")
+        data = response.json()
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(data["detail"], "동일한 채용공고에 1회만 지원 가능합니다.")

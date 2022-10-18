@@ -1,4 +1,5 @@
 from django.db.models import Q
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_204_NO_CONTENT,
@@ -83,6 +84,9 @@ class RecruitDetail(APIView):
 
 
 class RecruitApply(APIView):
+
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         try:
             return Recruit.objects.get(pk=pk)
@@ -99,6 +103,6 @@ class RecruitApply(APIView):
         if serializer.is_valid():
             apply = serializer.save(recruit=recruit, user=request.user)
             serializer = ApplySerializer(apply)
-            return Response(serializer.data)
+            return Response(serializer.data, status=HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
