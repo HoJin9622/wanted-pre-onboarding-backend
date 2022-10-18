@@ -3,9 +3,11 @@ from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_204_NO_CONTENT
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.exceptions import ParseError, NotFound
+from applies.models import Apply
 from companies.models import Company
 from .models import Recruit
 from .serializers import RecruitListSerializer, RecruitDetailSerializer
+from applies.serializers import ApplySerializer
 
 
 class Recruits(APIView):
@@ -75,21 +77,23 @@ class RecruitDetail(APIView):
         return Response(HTTP_204_NO_CONTENT)
 
 
-# class RecruitViewSet(ModelViewSet):
-#     queryset = Recruit.objects.all()
+class RecruitApply(APIView):
+    def get_object(self, pk):
+        try:
+            return Recruit.objects.get(pk=pk)
+        except Recruit.DoesNotExist:
+            raise NotFound
 
-#     def get_serializer_class(self):
-#         if self.action == "retrieve":
-#             return RecruitDetailSerializer
-#         return RecruitListSerializer
+    def post(self, request, pk):
+        recruit = self.get_object(pk)
+        serializer = ApplySerializer(data=request.data)
 
-#     def get_queryset(self):
-#         queryset = Recruit.objects.all()
-#         search = self.request.query_params.get("search")
-#         if search is not None:
-#             queryset = queryset.filter(
-#                 Q(position__icontains=search)
-#                 | Q(skill__icontains=search)
-#                 | Q(company__name__icontains=search)
-#             )
-#         return queryset
+        if Apply.objects.filter(user=request.user, recruit=recruit).exists():
+            raise ParseError("동일한 채용공고에 1회만 지원 가능합니다.")
+
+        if serializer.is_valid():
+            apply = serializer.save(recruit=recruit, user=request.user)
+            serializer = ApplySerializer(apply)
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
