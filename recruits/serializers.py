@@ -10,7 +10,17 @@ class RecruitDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recruit
-        fields = ("id", "position", "reward", "description", "skill")
+        fields = (
+            "id",
+            "position",
+            "reward",
+            "description",
+            "skill",
+            "company_name",
+            "company_nation",
+            "company_area",
+            "other_recruits",
+        )
 
     def get_company_name(self, obj):
         return obj.company.name
@@ -22,8 +32,10 @@ class RecruitDetailSerializer(serializers.ModelSerializer):
         return obj.company.area
 
     def get_other_recruits(self, obj):
-        recruits = obj.company.recruits.exclude(pk=obj.pk)
-        return RecruitListSerializer(recruits, many=True).data
+        recruits_id = obj.company.recruits.exclude(pk=obj.pk).values_list(
+            "id", flat=True
+        )
+        return recruits_id
 
 
 class RecruitListSerializer(serializers.ModelSerializer):
@@ -33,7 +45,15 @@ class RecruitListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recruit
-        fields = ("id", "position", "reward", "skill")
+        fields = (
+            "id",
+            "position",
+            "reward",
+            "skill",
+            "company_name",
+            "company_nation",
+            "company_area",
+        )
 
     def get_company_name(self, obj):
         return obj.company.name

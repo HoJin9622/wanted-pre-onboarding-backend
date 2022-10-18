@@ -1,9 +1,7 @@
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 from . import views
 
-app_name = "recruits"
-
-
-router = DefaultRouter()
-router.register("", views.RecruitViewSet)
-urlpatterns = router.urls
+urlpatterns = [
+    path("", views.Recruits.as_view()),
+    path("<int:pk>", views.RecruitDetail.as_view()),
+]
